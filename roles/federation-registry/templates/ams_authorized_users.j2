@@ -1,7 +1,8 @@
 {
-"authorized_users": [
-      {% for user in federation_registry_ams.authorized_users %}
-          "{{ user.username }}" {% if federation_registry_ams.authorized_users|length != loop.index %} , {% endif %} 
-      {% endfor %}
-  ]
+  "authorized_users": [
+        {% for user in federation_registry_ams.authorized_users %}
+            "{{ user.username }}" {% if federation_registry_ams.authorized_users|length != loop.index %} , {% endif %}
+        {% endfor %}
+  ],
+  "merge_environments_on_deploy": true
 }

@@ -2,7 +2,8 @@
 - hosts: federation-registry
   become: yes
   roles:
+    #- role: postgresql
     - {role: federation-registry, task: configure-environment}
-    - {role: federation-registry, task: postgres,tags: ['never','postgres']}
+    - {role: federation-registry, task: postgres}
     - {role: federation-registry, task: configure-ams}
     - {role: federation-registry, task: deploy}
