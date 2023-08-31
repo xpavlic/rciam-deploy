@@ -1,3 +1,4 @@
 ---
-  - include: "{{task}}.yml"
+  - block:
+      - include_tasks: "{{ task }}.yml"
     become: yes

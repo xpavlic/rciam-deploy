@@ -1,0 +1,50 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+    server_name federation-registry.dev.perun-aai.org;
+
+    # Redirect all HTTP requests to HTTPS
+    return 301 https://$host$request_uri;
+
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    server_name federation-registry.dev.perun-aai.org;
+
+    #ssl_certificate /etc/letsencrypt/live/federation-registry.dev.perun-aai.org/cert.pem;
+    #ssl_certificate_key /etc/letsencrypt/live/federation-registry.dev.perun-aai.org/privkey.pem;
+    ssl_certificate /etc/ssl/federation-registry/server.crt;
+    ssl_certificate_key /etc/ssl/federation-registry/server.key;
+    ssl_password_file /etc/ssl/federation-registry/password;
+
+    root /var/www/rciam-federation-registry/federation-registry-frontend;
+
+    index index.html index.htm index.nginx-debian.html;
+
+    location /federation {
+        try_files $uri $uri/ /federation/index.html;
+    }
+
+    location = /ams_verification_hash {
+  	return 302 /federation-backend/ams/ams_verification_hash;
+    }
+
+    location = /federation-backend {
+        return 302 /federation-backend/;
+    }
+
+    location /federation-backend/ {
+        proxy_pass_request_headers on;
+        proxy_set_header Host $host;
+        proxy_pass http://localhost:5000/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header DN $ssl_client_s_dn;
+    }
+}
