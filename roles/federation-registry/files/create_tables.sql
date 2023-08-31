@@ -104,7 +104,7 @@ create table organizations (
 
 create table service_details (
   id SERIAL PRIMARY KEY,
-  external_id INTEGER DEFAULT NULL,
+  external_id VARCHAR(256) DEFAULT NULL,
   tenant VARCHAR(256),
   website_url VARCHAR(256) DEFAULT NULL,
   service_name  VARCHAR(256),
@@ -162,6 +162,8 @@ create table service_errors (
   error_code bigint,
   error_description VARCHAR(2048),
   archived BOOLEAN DEFAULT FALSE,
+  proxy_deploy_success BOOLEAN DEFAULT FALSE,
+  solved BOOLEAN DEFAULT FALSE,
   PRIMARY KEY (service_id,date),
   FOREIGN KEY (service_id) REFERENCES service_details(id) ON DELETE CASCADE
 );

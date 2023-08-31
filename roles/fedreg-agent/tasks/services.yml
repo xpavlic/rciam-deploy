@@ -1,9 +1,9 @@
 - name: Create deployer configuration file
-  template:
-    src: deployers.config.json.j2
+  copy:
+    content: "{{ lookup('template', 'templates/deployers.config.json.j2') | to_nice_json }}"
     dest: "{{ fedreg_agent_conf_dir }}/{{ deployers_config_name }}"
     backup: yes
-  when: fedreg_agent_enable_ssp or fedreg_agent_enable_mitreid or fedreg_agent_enable_keycloak
+  when: fedreg_agent_enable_ssp or fedreg_agent_enable_mitreid or fedreg_agent_enable_keycloak or fedreg_agent_enable_cas
   become: yes
   tags:
     - agent
@@ -40,6 +40,18 @@
     backup: yes
   register: ssp_service
   when: fedreg_agent_enable_ssp
+  become: yes
+  tags:
+    - agent
+    - service
+
+- name: Create CAS deployer service file
+  template:
+    src: deployer_cas.service.j2
+    dest: "{{ fedreg_agent_services_path }}/{{ deployer_cas_name }}.service"
+    backup: yes
+  register: cas_service
+  when: fedreg_agent_enable_cas
   become: yes
   tags:
     - agent
@@ -85,6 +97,18 @@
     enabled: yes
     state: restarted
   when: fedreg_agent_enable_ssp
+  become: yes
+  tags:
+    - agent
+    - service
+    - service_enable
+
+- name: CAS deployer service enable
+  service:
+    name: '{{ deployer_cas_name }}'
+    enabled: yes
+    state: restarted
+  when: fedreg_agent_enable_cas
   become: yes
   tags:
     - agent

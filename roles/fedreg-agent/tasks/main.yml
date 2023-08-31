@@ -2,11 +2,11 @@
 # tasks file for fedreg-agent
 
 - name: Configuration tasks
-  include: "configure-common.yml"
+  include_tasks: "configure-common.yml"
 
 - name: Deploy tasks
-  include: "deploy.yml"
+  include_tasks: "deploy.yml"
 
 - name: Setup services
-  include: "services.yml"
+  include_tasks: "services.yml"
 
