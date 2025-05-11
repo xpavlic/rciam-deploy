@@ -1,3 +1,4 @@
+# Updated by Jan Pavlíček (xpavli95@stud.fit.vutbr.cz)
 - name: Create deployer configuration file
   copy:
     content: "{{ lookup('template', 'templates/deployers.config.json.j2') | to_nice_json }}"
@@ -45,6 +46,7 @@
     - agent
     - service
 
+# Added by Jan Pavlíček (xpavli95@stud.fit.vutbr.cz)
 - name: Create CAS deployer service file
   template:
     src: deployer_cas.service.j2
@@ -103,6 +105,7 @@
     - service
     - service_enable
 
+# Added by Jan Pavlíček (xpavli95@stud.fit.vutbr.cz)
 - name: CAS deployer service enable
   service:
     name: '{{ deployer_cas_name }}'
