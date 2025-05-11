@@ -98,8 +98,8 @@
 
 - name: Copy tenant configuration
   copy:
-    src: "{{ inventory_dir }}/muni.json"
-    dest: "{{federation_registry_express_path}}/JavaScript/tenant_config/muni.json"
+    src: "{{ inventory_dir }}/cesnet.json"
+    dest: "{{federation_registry_express_path}}/JavaScript/tenant_config/cesnet.json"
     force: yes
     owner: root
     mode: 0664
@@ -178,11 +178,12 @@
 - name: Verify push endpoint if not verified
   run_once: true
   uri:
-    url: "{{ federation_registry_ams.host }}/projects/{{ federation_registry_ams.project }}/subscriptions/{{ federation_registry_ams.sub }}:verifyPushEndpoint?key={{ federation_registry_ams.admin_token }}"
+    url: "{{ federation_registry_ams.host }}/projects/{{ federation_registry_ams.project }}/subscriptions/{{ federation_registry_ams.sub }}:verifyPushEndpoint"
     method: POST
     return_content: yes
     headers:
       Content-Type: "application/json"
+      x-api-key: "{{ federation_registry_ams.admin_token }}"
     body_format: json
   when:
     - "not ams_is_verif"

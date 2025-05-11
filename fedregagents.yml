@@ -6,7 +6,7 @@
 - name: RCIAM federation registry agent demo
   hosts: fedreg_agents
   roles:
-    - { role: fedreg-agent,    tags: agent_demo }
+    - { role: fedreg-agent }
 
 
 #- name: RCIAM federation registry agent production
