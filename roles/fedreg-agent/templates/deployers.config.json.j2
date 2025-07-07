@@ -12,6 +12,19 @@
         "poll_interval": {{ fedreg_agent_ams.time_interval }}
     }
 {% endmacro %}
+{% macro rabbitmq_config(agent) %}
+    "rabbitmq": {
+        {% if agent.name is defined %}
+            "deployer_name": "{{ agent.name }}",
+        {% endif %}
+        "host": "{{ fedreg_agent_rabbitmq.host }}",
+        "vhost": "{{ fedreg_agent_rabbitmq.vhost }}",
+        "pub_queue": "{{ fedreg_agent_rabbitmq.pub_queue }}",
+        "sub_queue": "{{ fedreg_agent_rabbitmq.sub_queue }}",
+        "username": "{{ fedreg_agent_rabbitmq.username }}",
+        "password": "{{ fedreg_agent_rabbitmq.password }}"
+    }
+{% endmacro %}
 {% macro attribute_mapping(mapping) %}
 {
     "id": {{ mapping.id }},
@@ -117,6 +130,7 @@
 {% if fedreg_agent_enable_cas | bool == True %}
     "cas": {
         {{ ams_config(fedreg_agent_cas) }},
+        {{ rabbitmq_config(fedreg_agent_cas) }},
         "cas_url": "{{ fedreg_agent_cas.cas_url }}",
         "username": "{{ fedreg_agent_cas.username }}",
         "password": "{{ fedreg_agent_cas.password }}",

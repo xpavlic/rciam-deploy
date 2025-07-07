@@ -30,6 +30,13 @@ users too:
     - { role: fedreg-agent, tags: agent }
 ```
 
+### Using RabbitMQ instead of AMS
+By default AMS is used, but RabbitMQ version can be enabled too. Either 
+1. run the task with `-e "agent_env_type=rabbitmq"`
+2. or change the var in `roles/federation-registry/defaults/main.yml` 
+
+`agent_env_type: #with options: "ams", "rabbitmq"`
+
 ### How to run
 
 An example of how to run your playbook :

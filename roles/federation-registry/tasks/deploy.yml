@@ -22,10 +22,10 @@
     path: "{{federation_registry_project_path}}/{{federation_registry_express_folder}}"
   ignore_errors: true
 
-- name: Clean Ams Agent Folder
+- name: Clean Agent Folder
   file:
     state: absent
-    path: "{{federation_registry_project_path}}/{{federation_registry_ams_agent_folder}}"
+    path: "{{federation_registry_project_path}}/{{federation_registry_agent_folder}}"
   ignore_errors: true
 
 - name: Clone the repository
@@ -39,8 +39,8 @@
 - name: Move Federation Backend to /var/www
   shell: mv {{federation_registry_git.clone_dest}}/{{federation_registry_express_folder}} {{federation_registry_project_path}}
 
-- name: Move Ams Agent to /var/www
-  shell: mv {{federation_registry_git.clone_dest}}/{{federation_registry_ams_agent_folder}} {{federation_registry_project_path}}
+- name: Move Agent to /var/www
+  shell: mv {{federation_registry_git.clone_dest}}/{{federation_registry_agent_folder}} {{federation_registry_project_path}}
 
 - name: Move Swagger File to /var/www
   shell: mv {{federation_registry_git.clone_dest}}/swagger.json {{federation_registry_project_path}}
@@ -71,9 +71,9 @@
   npm:
     path: "{{federation_registry_express_path}}"
 
-- name: Install node modules for ams-agent
+- name: Install node modules for queue-agent
   npm:
-    path: "{{federation_registry_ams_agent_path}}"
+    path: "{{federation_registry_agent_path}}"
 
 - name: React config
   template:
@@ -107,20 +107,29 @@
 
 - name: Agent env
   template:
-    src: ams-env.j2
-    dest: "{{federation_registry_ams_agent_path}}/.env"
+    src: "ams-env.j2"
+    dest: "{{federation_registry_agent_path}}/.env"
     backup: yes
+  when: agent_env_type == "ams"
 
-- name: Agent config
+- name: Agent(ams) config
   template:
     src: ams_authorized_users.j2
-    dest: "{{federation_registry_ams_agent_path}}/config.json"
+    dest: "{{federation_registry_agent_path}}/config.json"
     backup: yes
+  when: agent_env_type == "ams"
+
+- name: Agent(rabbitmq) config
+  template:
+    src: rabbitmq-config.j2
+    dest: "{{federation_registry_agent_path}}/config.json"
+    backup: yes
+  when: agent_env_type == "rabbitmq"
 
 - name: email transport config
   template:
     src: email_transport_config.j2
-    dest: "{{federation_registry_ams_agent_path}}/email_transport_config.json"
+    dest: "{{federation_registry_agent_path}}/email_transport_config.json"
     backup: yes
 
 - name: delete existing pm2 processes if running
@@ -166,8 +175,11 @@
 - name: start Pm2 processes
   command: "pm2 start {{federation_registry_pm2_conf_path}}/ecosystem.config.js"
 
-- name: restart Pm2 processes
-  command: "pm2 restart all"
+- name: restart Pm2 fedReg
+  command: "pm2 restart express"
+
+- name: restart Pm2 queue agent
+  command: "pm2 restart queue_agent"
 
 - name: restart nginx
   command: "systemctl restart nginx.service"
@@ -185,5 +197,4 @@
       Content-Type: "application/json"
       x-api-key: "{{ federation_registry_ams.admin_token }}"
     body_format: json
-  when:
-    - "not ams_is_verif"
+  when: agent_env_type == "ams" and not ams_is_verif

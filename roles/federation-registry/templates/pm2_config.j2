@@ -1,9 +1,9 @@
 module.exports = {
   apps : [
-  {% if inventory_hostname in groups['ams-agent'] %}
+  {% if inventory_hostname in groups['queue_agent'] %}
     {
-      name        : "ams_agent",
-      script      : "{{federation_registry_ams_agent_path}}/app.js",
+      name        : "queue_agent",
+      script      : "{{federation_registry_agent_path}}/app.js",
     },
   {% endif %}
   {
