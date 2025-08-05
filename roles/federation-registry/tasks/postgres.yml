@@ -1,6 +1,8 @@
 ---
 - name: Make sure psycopg2 is installed
-  command: pip install psycopg2-binary --ignore-installed
+  apt:
+    name: python3-psycopg2
+    state: present
   run_once: true
 
 - name: Send Create Tables SQL File
@@ -24,6 +26,7 @@
   run_once: true
   community.postgresql.postgresql_script:
     db: "{{ rciam_dbs.federation.name }}"
+    port: "{{ rciam_dbs.federation.port }}"
     login_user: "{{ rciam_dbs.federation.owner_username }}"
     login_password: "{{ rciam_dbs.federation.owner_password }}"
     path : "{{ rciam_dbs.federation.script_path }}"
@@ -41,6 +44,7 @@
   run_once: true
   community.postgresql.postgresql_script:
     db: "{{ rciam_dbs.federation.name }}"
+    port: "{{ rciam_dbs.federation.port }}"
     login_user: "{{ rciam_dbs.federation.owner_username }}"
     login_password: "{{ rciam_dbs.federation.owner_password }}"
     path : "{{rciam_dbs.federation.script_path}}"

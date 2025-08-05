@@ -5,10 +5,14 @@ Description=Cas deployer service {{ build_branch }}
 
 [Service]
 User=root
-ExecStart={{ fedreg_agent_venv_path }}/bin/deployer_cas -c {{ fedreg_agent_conf_dir }}/{{ deployers_config_name }}
 Restart=always
 RestartSec=60s
 Type=simple
+{% if agent_env_type == 'rabbitmq' %}
+ExecStart={{ fedreg_agent_venv_path }}/bin/deployer_cas_rabbitmq.py -c {{ fedreg_agent_conf_dir }}/{{ deployers_config_name }}
+{% else %}
+ExecStart={{ fedreg_agent_venv_path }}/bin/deployer_cas.py -c {{ fedreg_agent_conf_dir }}/{{ deployers_config_name }}
+{% endif %}
 
 [Install]
 WantedBy=multi-user.target

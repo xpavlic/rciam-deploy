@@ -1,0 +1,13 @@
+{
+  "merge_environments_on_deploy": true,
+  "merged_integration_environment_name": "merged",
+  "rabbitmq_user": "{{ federation_registry_rabbitmq.username }}",
+  "rabbitmq_pass": "{{ federation_registry_rabbitmq.password }}",
+  "rabbitmq_host": "{{ federation_registry_rabbitmq.host }}",
+  "rabbitmq_vhost": "{{ federation_registry_rabbitmq.vhost }}",
+  "rabbitmq_update_status_q": "{{ federation_registry_rabbitmq.update_status_q }}",
+  "ams_auth_key": "{{ federation_registry_ams.auth_key }}",
+  "express_url": "{{ federation_registry_ams.express_url }}",
+  "express_key": "{{ federation_registry_ams.agent_key }}",
+  "env": "{{ federation_registry_deployment_env }}",
+}
