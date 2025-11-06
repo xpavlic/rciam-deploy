@@ -49,18 +49,18 @@
    - python
    - requirements
 
-- name: Install rciam-federation-registry-agent
-  when: build_branch == "thesis"
+- name: Install rciam-federation-registry-agent (non-master)
+  when: build_branch != "master"
   pip:
-    name: "git+https://github.com/xpavlic/rciam-federation-registry-agent.git@thesis"
+    name: "git+https://github.com/xpavlic/rciam-federation-registry-agent.git@{{ build_branch }}"
     virtualenv: "{{ fedreg_agent_venv_path }}"
     virtualenv_command: "{{ fedreg_agent_venv_command }}"
     state: latest
   become: yes
   tags:
-   - agent
-   - python
-   - requirements
+    - agent
+    - python
+    - requirements
 
 - name: "Ensure {{ fedreg_agent_conf_dir }} dir exists"
   file:
