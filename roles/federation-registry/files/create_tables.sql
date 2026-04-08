@@ -1,13 +1,12 @@
-DROP TABLE IF EXISTS user_edu_person_entitlement,tokens,user_info, service_petition_contacts, service_petition_oidc_grant_types,service_boolean,service_petition_boolean,service_saml_attributes,service_petition_saml_attributes, service_petition_oidc_redirect_uris,service_petition_oidc_post_logout_redirect_uris, service_petition_oidc_scopes,
-service_petition_details_oidc,service_petition_details_saml, service_petition_details, service_oidc_scopes,service_contacts,service_oidc_grant_types,service_oidc_redirect_uris,service_oidc_post_logout_redirect_uris,service_details_oidc,
-service_details_saml,service_details,service_state,user_roles,role_actions,role_entitlements,groups,invitations,group_subs,tenant_deployer_agents,banner_alerts,deployment_tasks,service_errors,organizations,service_tags,tenants;
+DROP TABLE IF EXISTS user_edu_person_entitlement,tokens,user_info, service_petition_contacts, service_petition_oidc_grant_types,service_boolean,service_petition_boolean,service_saml_attributes,service_petition_saml_attributes, service_petition_oidc_redirect_uris,service_petition_oidc_post_logout_redirect_uris, service_petition_oidc_scopes, service_policies, service_petition_policies, 
+service_petition_details_oidc,service_petition_details_saml, service_petition_details, service_oidc_scopes,service_contacts,service_oidc_grant_types,service_oidc_redirect_uris,service_oidc_post_logout_redirect_uris,service_details_oidc, service_infrastructures, service_petition_infrastructures,
+service_details_saml,service_details,service_state,user_roles,role_actions,role_entitlements,groups,invitations,group_subs,tenant_deployer_agents,banner_alerts,deployment_tasks,service_errors,organizations,service_tags,tenants CASCADE;
 
 create table tokens (
   token VARCHAR(2048),
   id_token VARCHAR(2048),
   code VARCHAR(1054) PRIMARY KEY
 );
-
 
 create table tenants (
   name VARCHAR(256) PRIMARY KEY,
@@ -16,7 +15,6 @@ create table tenants (
   issuer_url VARCHAR(256),
   base_url VARCHAR(256) DEFAULT NULL
 );
-
 
 create table user_info (
   id SERIAL PRIMARY KEY,
@@ -31,14 +29,12 @@ create table user_info (
   FOREIGN KEY (tenant) REFERENCES tenants(name)
 );
 
-
 create table user_roles (
   id SERIAL PRIMARY KEY,
   role_name VARCHAR(256),
   tenant VARCHAR(256),
   FOREIGN KEY (tenant) REFERENCES tenants(name)
 );
-
 
 create table role_actions (
   role_id bigint,
@@ -54,12 +50,10 @@ create table role_entitlements (
   FOREIGN KEY (role_id) REFERENCES user_roles(id)
 );
 
-
 create table groups (
   id SERIAL PRIMARY KEY,
   group_name VARCHAR(256)
 );
-
 
 create table invitations (
   id SERIAL PRIMARY KEY,
@@ -75,7 +69,6 @@ create table invitations (
   FOREIGN KEY (group_id) REFERENCES groups(id)
 );
 
-
 create table group_subs (
   group_id INTEGER,
   sub VARCHAR(256),
@@ -84,14 +77,12 @@ create table group_subs (
   FOREIGN KEY (group_id) REFERENCES groups(id)
 );
 
-
 create table user_edu_person_entitlement (
   user_id bigint,
   edu_person_entitlement VARCHAR(256),
   PRIMARY KEY (user_id,edu_person_entitlement),
   FOREIGN KEY (user_id) REFERENCES user_info(id)
 );
-
 
 create table organizations (
   organization_id SERIAL PRIMARY KEY,
@@ -101,28 +92,28 @@ create table organizations (
   ror_id VARCHAR(256) DEFAULT NULL
 );
 
-
 create table service_details (
   id SERIAL PRIMARY KEY,
-  external_id VARCHAR(256) DEFAULT NULL,
+  external_id INTEGER DEFAULT NULL,
   tenant VARCHAR(256),
-  website_url VARCHAR(256) DEFAULT NULL,
-  service_name  VARCHAR(256),
+  service_name  VARCHAR(56),
+  service_name_czech VARCHAR(56),
   group_id INTEGER,
   service_description VARCHAR(1024),
+  service_description_czech VARCHAR(255),
   logo_uri VARCHAR(2048),
-  policy_uri VARCHAR(2048),
+  service_login_url VARCHAR(2048),
+  service_login_url_czech VARCHAR(2048),
+  service_jurisdiction VARCHAR(256),
   integration_environment VARCHAR(256),
   country VARCHAR(256),
   requester VARCHAR(256),
   protocol VARCHAR(256),
-  aup_uri VARCHAR(256) DEFAULT NULL,
   deleted BOOLEAN DEFAULT FALSE,
   organization_id INTEGER,
   FOREIGN KEY (organization_id) REFERENCES organizations(organization_id),
   FOREIGN KEY (tenant) REFERENCES tenants(name)
 );
-
 
 create table service_details_oidc (
   id INTEGER PRIMARY KEY,
@@ -144,7 +135,6 @@ create table service_details_oidc (
   FOREIGN KEY (id) REFERENCES service_details(id) ON DELETE CASCADE
 );
 
-
 create table service_state (
   id bigint PRIMARY KEY,
   state VARCHAR(256),
@@ -154,7 +144,6 @@ create table service_state (
   created_at timestamp without time zone DEFAULT NULL,
   FOREIGN KEY (id) REFERENCES service_details(id) ON DELETE CASCADE
 );
-
 
 create table service_errors (
   service_id bigint,
@@ -168,14 +157,12 @@ create table service_errors (
   FOREIGN KEY (service_id) REFERENCES service_details(id) ON DELETE CASCADE
 );
 
-
 create table service_details_saml (
   id bigint PRIMARY KEY,
   entity_id VARCHAR(256),
   metadata_url VARCHAR(256),
   FOREIGN KEY (id) REFERENCES service_details(id) ON DELETE CASCADE
 );
-
 
 create table service_contacts (
   id SERIAL PRIMARY KEY,
@@ -185,14 +172,12 @@ create table service_contacts (
   FOREIGN KEY (owner_id) REFERENCES service_details(id) ON DELETE CASCADE
 );
 
-
 create table service_oidc_grant_types (
   id SERIAL PRIMARY KEY,
   owner_id bigint,
   value VARCHAR(256),
   FOREIGN KEY (owner_id) REFERENCES service_details(id) ON DELETE CASCADE
 );
-
 
 create table service_oidc_redirect_uris (
   id SERIAL PRIMARY KEY,
@@ -207,7 +192,6 @@ create table service_oidc_post_logout_redirect_uris (
   value VARCHAR(256),
   FOREIGN KEY (owner_id) REFERENCES service_details(id) ON DELETE CASCADE
 );
-
 
 create table service_oidc_scopes (
   id SERIAL PRIMARY KEY,
@@ -225,17 +209,18 @@ create table service_saml_attributes (
   FOREIGN KEY (owner_id) REFERENCES service_details(id) ON DELETE CASCADE
 );
 
-
-
 create table service_petition_details (
   id SERIAL PRIMARY KEY,
   service_id INTEGER DEFAULT NULL,
   tenant VARCHAR(256),
-  website_url VARCHAR(256) DEFAULT NULL,
   service_description VARCHAR(1024),
-  service_name  VARCHAR(256),
+  service_description_czech VARCHAR(255),
+  service_name  VARCHAR(56),
+  service_name_czech VARCHAR(56),
+  service_login_url VARCHAR(2048),
+  service_login_url_czech VARCHAR(2048),
+  service_jurisdiction VARCHAR(256),
   logo_uri VARCHAR(2048),
-  policy_uri VARCHAR(2048),
   country VARCHAR(256),
   integration_environment VARCHAR(256),
   type VARCHAR(256) DEFAULT 'create',
@@ -244,7 +229,6 @@ create table service_petition_details (
   protocol VARCHAR(256),
   requester VARCHAR(256),
   reviewer VARCHAR(256) DEFAULT NULL,
-  aup_uri VARCHAR(256) DEFAULT NULL,
   group_id INTEGER DEFAULT NULL,
   last_edited timestamp without time zone DEFAULT NULL,
   reviewed_at timestamp without time zone DEFAULT NULL,
@@ -254,7 +238,6 @@ create table service_petition_details (
   FOREIGN KEY (service_id) REFERENCES service_details(id) ON DELETE SET NULL
 );
 
-
 create table service_boolean (
   id SERIAL PRIMARY KEY,
   service_id bigint,
@@ -263,7 +246,6 @@ create table service_boolean (
   FOREIGN KEY (service_id) REFERENCES service_details(id) ON DELETE CASCADE
 );
 
-
 create table service_petition_boolean (
   id SERIAL PRIMARY KEY,
   petition_id bigint,
@@ -271,7 +253,6 @@ create table service_petition_boolean (
   value BOOLEAN DEFAULT FALSE,
   FOREIGN KEY (petition_id) REFERENCES service_petition_details(id) ON DELETE CASCADE
 );
-
 
 create table service_petition_details_oidc (
   id bigint PRIMARY KEY,
@@ -293,14 +274,12 @@ create table service_petition_details_oidc (
   FOREIGN KEY (id) REFERENCES service_petition_details(id) ON DELETE CASCADE
 );
 
-
 create table service_petition_details_saml (
   id bigint PRIMARY KEY,
   entity_id VARCHAR(256),
   metadata_url VARCHAR(256),
   FOREIGN KEY (id) REFERENCES service_petition_details(id) ON DELETE CASCADE
 );
-
 
 create table service_petition_contacts (
   id SERIAL PRIMARY KEY,
@@ -309,7 +288,6 @@ create table service_petition_contacts (
   type VARCHAR(256),
   FOREIGN KEY (owner_id) REFERENCES service_petition_details(id) ON DELETE CASCADE
 );
-
 
 create table service_petition_oidc_grant_types (
   id SERIAL PRIMARY KEY,
@@ -341,15 +319,12 @@ create table service_petition_oidc_post_logout_redirect_uris (
   FOREIGN KEY (owner_id) REFERENCES service_petition_details(id) ON DELETE CASCADE
 );
 
-
-
 create table service_petition_oidc_scopes (
   id SERIAL PRIMARY KEY,
   owner_id bigint,
   value VARCHAR(256),
   FOREIGN KEY (owner_id) REFERENCES service_petition_details(id) ON DELETE CASCADE
 );
-
 
 create table tenant_deployer_agents (
   id SERIAL PRIMARY KEY,
@@ -363,7 +338,6 @@ create table tenant_deployer_agents (
   FOREIGN KEY (tenant) REFERENCES tenants(name)
 );
 
-
 create table banner_alerts (
     id SERIAL PRIMARY KEY,
     tenant VARCHAR(256),
@@ -373,7 +347,6 @@ create table banner_alerts (
     priority INTEGER DEFAULT 0,
     FOREIGN KEY (tenant) REFERENCES tenants(name) ON DELETE CASCADE
 );
-
 
 create  table deployment_tasks (
   agent_id INTEGER,
@@ -385,8 +358,6 @@ create  table deployment_tasks (
   FOREIGN KEY (service_id) REFERENCES service_details(id)
 );
 
-
-
 create table service_tags (
   service_id INTEGER,
   tag VARCHAR(256),
@@ -395,5 +366,33 @@ create table service_tags (
   PRIMARY KEY (tag,service_id)
 );
 
+create table service_policies (
+  id SERIAL PRIMARY KEY,
+  owner_id bigint,
+  name VARCHAR(256),
+  url VARCHAR(2048),
+  FOREIGN KEY (owner_id) REFERENCES service_details(id) ON DELETE CASCADE
+);
 
+create table service_infrastructures (
+  id SERIAL PRIMARY KEY,
+  owner_id bigint,
+  value VARCHAR(256),
+  FOREIGN KEY (owner_id) REFERENCES service_details(id) ON DELETE CASCADE
+);
+
+create table service_petition_infrastructures (
+  id SERIAL PRIMARY KEY,
+  owner_id bigint,
+  value VARCHAR(256),
+  FOREIGN KEY (owner_id) REFERENCES service_petition_details(id) ON DELETE CASCADE
+);
+
+create table service_petition_policies (
+  id SERIAL PRIMARY KEY,
+  owner_id bigint,
+  name VARCHAR(256),
+  url VARCHAR(2048),
+  FOREIGN KEY (owner_id) REFERENCES service_petition_details(id) ON DELETE CASCADE
+);
 
