@@ -1,4 +1,8 @@
 ---
-  - block:
-      - include_tasks: "{{ task }}.yml"
-    become: yes
+- block:
+    - include_tasks: "configure-environment.yml"
+    - include_tasks: "postgres.yml"
+    # - include_tasks: "configure-ams.yml"
+    #   when: agent_env_type == "ams"
+    - include_tasks: "deploy.yml"
+  become: yes

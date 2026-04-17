@@ -3,6 +3,7 @@
   "logo_url": "https://logo_url.com",
   "sender": "Email Sender",
   "contact": "contact_us@mail.com",
+  "website_url": "https://tenant.com",
   "tenant_signature": "(Email Template sender) Tenant Support Team",
   "production_url": "https://federation-registry-url.com",
   "home_page_description": "The Federation Registry Service provides a secure web interface through which service operators can register their OpenID Connect and SAML based services.",
@@ -127,6 +128,14 @@
         "attribute": "urn:perun:facility:attribute-def:def:rpIrpUrl"
       }
     ],
+    "infrastructure_terms": {
+      "e-INFRA.cz": "https://www.e-infra.cz/terms-of-use/",
+      "CESNET": "https://www.cesnet.cz/en/rules/",
+      "EOSC": "https://eosc-portal.eu/terms-and-conditions",
+      "BBMRI": "https://www.bbmri-eric.eu/privacy-policy/",
+      "Elixir": "https://elixir-europe.org/about-us/privacy-policy",
+      "deNBI": "https://www.denbi.de/privacy-policy"
+    },
     "scope":["openid","voperson_id","email","profile","offline_access","eduperson_entitlement","eduperson_scoped_affiliation","eduperson_unique_id","aarc","orcid","eduperson_entitlement_jwt"],
     "invitation_validity_seconds":2592000,
     "token_endpoint_auth_method":["client_secret_basic","client_secret_post","client_secret_jwt","private_key_jwt","none"],
@@ -138,15 +147,21 @@
         "description": "Select one or more infrastructures your service belongs to."
       },
       "country": {
-        "enabled": false,
+        "enabled": true,
         "required": ["demo","production"],
         "description": "The country or jurisdiction in which the service is primarily provided or applicable."
+      },
+      "website_url": {
+        "description": "Your organisation’s website with more information about the service and its provider."
       },
       "service_description": {
         "description" : "Short description (max 255 characters) to help users understand the purpose of your service."
       },
       "service_login_url": {
         "description": "Homepage or login page of your service where the AAI login button is visible for users to start authentication."
+      },
+      "organization_url": {
+        "description": "Your organisation’s website with more information about the service and its provider."
       },
       "client_id":{
         "tooltip": "A unique string representing the registration information provided by the OAuth 2.0 client at the authorisation server."
@@ -184,6 +199,19 @@
       }
     },
     "extra_fields":{
+      "infrastructures": {
+        "options": [
+          "e-INFRA.cz",
+          "CESNET",
+          "EOSC",
+          "BBMRI",
+          "Elixir",
+          "deNBI"
+        ],
+        "required": [
+          "production"
+        ]
+      },
       "organization":{
         "title": "Organization",
         "tag": "org",
@@ -197,6 +225,7 @@
       "infrastructures":[],
       "service_policies":[],
       "rp_accepted_tos":false,
+      "website_url": "",
       "redirect_uris": [],
       "post_logout_redirect_uris": [],
       "resource_indicators": [],

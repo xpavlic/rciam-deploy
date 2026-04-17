@@ -178,8 +178,8 @@
 - name: restart Pm2 fedReg
   command: "pm2 restart express"
 
-- name: restart Pm2 queue agent
-  command: "pm2 restart queue_agent"
+- name: stop Pm2 queue agent
+  command: "pm2 stop queue_agent"
 
 - name: restart nginx
   command: "systemctl restart nginx.service"
